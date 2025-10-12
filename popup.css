@@ -1,7 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    /* 调整宽度以容纳不换行的描述文字，您可以根据实际描述文字长度调整 */
-    width: 280px; 
+    width: 280px; /* 调整宽度以适应内容 */
     padding: 10px;
     background-color: #f4f4f9;
 }
@@ -17,15 +16,12 @@ h3 {
     text-align: center;
 }
 
-/* --- 设置行样式：确保文字和开关在同一行且不换行 --- */
+/* 设置行样式 */
 .setting-row {
     display: flex;
-    /* 让项目在主轴（水平）上分散对齐：描述在左，开关在右 */
-    justify-content: space-between;
-    /* 垂直居中对齐，确保文字和开关高度一致 */
-    align-items: center;
-    
-    margin-bottom: 10px; /* 略微减少行间距 */
+    justify-content: space-between; /* 描述在左，开关在右 */
+    align-items: center; /* 垂直居中 */
+    margin-bottom: 10px;
     padding: 8px 10px;
     background-color: #fff;
     border-radius: 5px;
@@ -33,34 +29,26 @@ h3 {
 }
 
 .setting-label {
-    /* 允许标签占据可用空间 */
     flex-grow: 1;
-    /* 缩小字体以容纳更多文字 */
     font-size: 13px;
     color: #555;
-    margin-bottom: 0;
-    text-align: left;
     margin-right: 10px;
-    
-    /* ⚡️ 关键修改：强制不换行，如果文字过长，将溢出（推荐调整 body 宽度来解决） */
-    white-space: nowrap; 
-    overflow: hidden; /* 隐藏溢出的部分 */
-    text-overflow: ellipsis; /* 显示省略号 */
+    white-space: nowrap; /* 强制不换行 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: bold;
 }
-/* --- 设置行样式结束 --- */
 
-
-/* --- 开关样式：圆点选单/圆角 Toggle Switch --- */
+/* 开关样式 */
 .switch {
     position: relative;
     display: inline-block;
     width: 44px;
     height: 24px;
-    /* 确保开关不会被挤压 */
-    flex-shrink: 0;
+    flex-shrink: 0; /* 防止开关被挤压 */
 }
 
-.switch input { 
+.switch input {
     opacity: 0;
     width: 0;
     height: 0;
@@ -73,34 +61,28 @@ h3 {
     left: 0;
     right: 0;
     bottom: 0;
-    
-    /* 确保轨道是完全圆角 */
     background-color: #ccc;
     transition: .4s;
-    border-radius: 24px; /* 使背景轨道两端完全圆润 */
+    border-radius: 24px; /* 圆角轨道 */
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 18px; /* 滑块高度 */
-    width: 18px; /* 滑块宽度 */
+    height: 18px;
+    width: 18px;
     left: 3px;
     bottom: 3px;
     background-color: white;
     transition: .4s;
-    
-    /* 确保滑块是完美的圆形（圆点） */
-    border-radius: 50%; 
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); /* 添加阴影增加立体感 */
+    border-radius: 50%; /* 圆形滑块 */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 input:checked + .slider {
-    /* 启用时的背景颜色 */
-    background-color: #2196F3;
+    background-color: #2196F3; /* 启用时的颜色 */
 }
 
 input:checked + .slider:before {
-    /* 滑块向右移动的距离： 44px (总宽度) - 3px*2 (左右边距) - 18px (滑块宽度) = 20px */
-    transform: translateX(20px);
+    transform: translateX(20px); /* 向右移动滑块 */
 }

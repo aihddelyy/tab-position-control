@@ -1,56 +1,42 @@
-// =================================================================================
-// 變數宣告區
-// =================================================================================
-
-// 【功能一：关闭后激活左侧】所需变量 (已被验证有效)
+// 关闭标签后激活左侧功能所需变量
 let lastUserTabInfo = {
     id: null,
     index: -1,
     windowId: -1,
-    previousActiveId: null, 
+    previousActiveId: null,
     previousActiveIndex: -1
 };
 
-// 【功能二：新标签页位置】所需变量 (基于您提供的插件代码)
+// 控制新标签页位置所需变量
 const windowOpenTime = {};
 const windowActiveTab = {};
-let recentlyClosedWindowId; // 插件代码中的变量，暂时保留
-
-// =================================================================================
-// 通用工具函數 (基于您提供的插件代码)
-// =================================================================================
+let recentlyClosedWindowId;
 
 /**
- * 将标签页移动到打开它的标签页右侧。
- * @param {object} opener - 打开标签页的 Tab 对象。
- * @param {number} id - 要移动的标签页 ID。
- * @param {number} index - 要移动标签页的当前索引。
+ * 移动标签页到其打开者（opener）的右侧
+ * @param {chrome.tabs.Tab} opener - 打开者标签页对象
+ * @param {number} id - 要移动的标签页 ID
+ * @param {number} index - 要移动的标签页当前索引
  */
 const moveTabNextToOpener = (opener, id, index) => {
-    // 检查是否有错误或 opener 不存在
     if (!opener || chrome.runtime.lastError) return;
-    
-    // 目标位置是 opener 的索引 + 1
+
     const targetIndex = opener.index + 1;
-    
-    // 只有当目标位置在当前位置左侧时才移动 (防止重复移动或无限循环)
+
+    // 仅当目标位置在当前位置左侧时移动，防止循环
     if (targetIndex < index) {
-        // 使用 setTimeout 来绕过浏览器对 tabs.move 的即时锁定
+        // 使用 setTimeout 避免浏览器锁定
         setTimeout(() => {
-             try {
+            try {
                 chrome.tabs.move(id, { index: targetIndex });
-             } catch (e) {
-                 // 忽略移动失败的错误
-             }
-        }, 50); // 极短的延迟，让浏览器先处理默认行为
+            } catch (e) {
+                // 忽略移动错误
+            }
+        }, 50);
     }
 };
 
-
-// =================================================================================
-// 初始化和窗口事件 (基于您提供的插件代码)
-// =================================================================================
-
+// 初始化时获取所有窗口和标签页信息
 chrome.windows.getAll({ populate: true }, windows => {
     windows.forEach(w => {
         windowActiveTab[w.id] = [];
@@ -62,27 +48,29 @@ chrome.windows.getAll({ populate: true }, windows => {
     });
 });
 
+// 窗口创建时，初始化相关数据
 chrome.windows.onCreated.addListener(window => {
     windowOpenTime[window.id] = Date.now();
     windowActiveTab[window.id] = [];
 });
 
+// 窗口关闭时，清理数据
 chrome.windows.onRemoved.addListener(windowId => {
-    if (windowId in windowOpenTime) delete windowOpenTime[windowId];
-    if (windowId in windowActiveTab) delete windowActiveTab[windowId];
+    delete windowOpenTime[windowId];
+    delete windowActiveTab[windowId];
 });
 
-// =================================================================================
-// 通用事件監聽器 (合并功能一和功能二的逻辑)
-// =================================================================================
-
-// 監聽分頁啟用事件，同时更新两个功能所需的跟踪变量
+// 监听标签页激活事件，更新追踪变量
 chrome.tabs.onActivated.addListener(activeInfo => {
-    // 【功能二跟踪】记录最近激活的标签页
-    windowActiveTab[activeInfo.windowId].unshift(activeInfo.tabId);
-    if (windowActiveTab[activeInfo.windowId].length > 2) windowActiveTab[activeInfo.windowId].splice(2);
-    
-    // 【功能一跟踪】记录最后用户激活的标签页（需要异步获取完整tab信息）
+    // 记录最近激活的标签页 (用于新标签页定位)
+    if (windowActiveTab[activeInfo.windowId]) {
+        windowActiveTab[activeInfo.windowId].unshift(activeInfo.tabId);
+        if (windowActiveTab[activeInfo.windowId].length > 2) {
+            windowActiveTab[activeInfo.windowId].splice(2);
+        }
+    }
+
+    // 记录最后用户激活的标签页信息 (用于关闭后激活左侧)
     chrome.tabs.get(activeInfo.tabId, (tab) => {
         if (!chrome.runtime.lastError && tab && tab.windowId !== chrome.windows.WINDOW_ID_NONE) {
             lastUserTabInfo.previousActiveId = lastUserTabInfo.id;
@@ -94,7 +82,7 @@ chrome.tabs.onActivated.addListener(activeInfo => {
     });
 });
 
-// 當分頁被拖動，位置改變時，更新索引
+// 标签页移动时，更新其索引
 chrome.tabs.onMoved.addListener((tabId, moveInfo) => {
     if (tabId === lastUserTabInfo.id) {
         lastUserTabInfo.index = moveInfo.toIndex;
@@ -102,34 +90,36 @@ chrome.tabs.onMoved.addListener((tabId, moveInfo) => {
     }
 });
 
-
-// =================================================================================
-// 功能一：關閉分頁後，啟用左側分頁 (基于已验证的逻辑)
-// =================================================================================
-
+// 标签页关闭时的处理
 chrome.tabs.onRemoved.addListener((removedTabId, removeInfo) => {
-    // 【功能二跟踪】更新插件的活动标签页列表
-    if (removedTabId === windowActiveTab[removeInfo.windowId][0]) recentlyClosedWindowId = removeInfo.windowId;
-    windowActiveTab[removeInfo.windowId] = windowActiveTab[removeInfo.windowId].filter(id => id !== removedTabId);
+    // 更新活动标签页列表
+    if (windowActiveTab[removeInfo.windowId]) {
+        if (removedTabId === windowActiveTab[removeInfo.windowId][0]) {
+            recentlyClosedWindowId = removeInfo.windowId;
+        }
+        windowActiveTab[removeInfo.windowId] = windowActiveTab[removeInfo.windowId].filter(id => id !== removedTabId);
+    }
 
-    // 核心功能一逻辑
+    // 功能一：关闭标签后，激活左侧标签
     chrome.storage.sync.get({ activateLeftTabEnabled: true }, (items) => {
         if (!items.activateLeftTabEnabled || removeInfo.isWindowClosing) {
-            return; 
+            return;
         }
 
+        // 确认关闭的是之前激活的标签
         if (removedTabId !== lastUserTabInfo.previousActiveId || removeInfo.windowId !== lastUserTabInfo.windowId) {
-             return;
+            return;
         }
 
         const removedTabIndex = lastUserTabInfo.previousActiveIndex;
-        let newIndex = removedTabIndex > 0 ? removedTabIndex - 1 : 0;
-        
+        let newIndex = Math.max(0, removedTabIndex - 1);
+
         chrome.tabs.query({ windowId: removeInfo.windowId }, (tabs) => {
             if (tabs.length === 0) {
                 return;
             }
-            
+
+            // 确保索引在范围内
             if (newIndex >= tabs.length) {
                 newIndex = tabs.length - 1;
             }
@@ -143,11 +133,7 @@ chrome.tabs.onRemoved.addListener((removedTabId, removeInfo) => {
     });
 });
 
-
-// =================================================================================
-// 功能二：新分頁在目前分頁右側開啟
-// =================================================================================
-
+// 功能二：新标签页在当前标签右侧打开
 chrome.tabs.onCreated.addListener(newTab => {
     const { id, index, openerTabId, pinned, windowId } = newTab;
 
@@ -156,16 +142,15 @@ chrome.tabs.onCreated.addListener(newTab => {
             return;
         }
 
-        // 插件中的启动时间检查，防止浏览器启动时移动标签页
+        // 防止浏览器启动时移动标签页
         if (!(windowId in windowOpenTime)) {
             windowOpenTime[windowId] = Date.now();
         }
-        if (Date.now() - windowOpenTime[windowId] < 1000) return; 
+        if (Date.now() - windowOpenTime[windowId] < 1000) return;
 
         if (!openerTabId) {
-            // 案例 1: 没有 openerTabId (Ctrl+T 或点击 '+')
-            // 使用最近激活的标签页作为 opener
-            const recentlyActiveTabId = windowActiveTab[windowId][0];
+            // 对于没有 opener 的新标签 (如 Ctrl+T), 使用最近激活的标签作为参考
+            const recentlyActiveTabId = windowActiveTab[windowId]?.[0];
             if (recentlyActiveTabId) {
                 chrome.tabs.get(recentlyActiveTabId, tab => {
                     moveTabNextToOpener(tab, id, index);
@@ -173,8 +158,8 @@ chrome.tabs.onCreated.addListener(newTab => {
             }
             return;
         }
-        
-        
+
+        // 对于有 opener 的新标签，直接移动
         chrome.tabs.get(openerTabId, opener => {
             moveTabNextToOpener(opener, id, index);
         });
