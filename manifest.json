@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Tab Control Pro",
-  "version": "1.0",
-  "description": "Provides options to activate the left tab on close and open new tabs to the right.",
+  "name": "__MSG_extensionName__",
+  "version": "1.1.0",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "zh_CN",
 
   "background": {
     "service_worker": "background.js"
@@ -20,7 +21,7 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_title": "Tab Control Pro Settings"
+    "default_title": "__MSG_extensionDefaultTitle__"
   },
   
   "icons": {

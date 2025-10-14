@@ -1,0 +1,26 @@
+{
+  "extensionName": {
+    "message": "Tab Control Pro",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Provides options to activate the left tab on close and open new tabs to the right.",
+    "description": "Description of the extension."
+  },
+  "extensionDefaultTitle": {
+    "message": "Tab Control Pro Settings",
+    "description": "Default title for the extension action button."
+  },
+  "featuresToggle": {
+    "message": "Feature Toggles",
+    "description": "Title for the feature toggles section."
+  },
+  "activateLeftTabLabel": {
+    "message": "Activate left tab after closing current tab",
+    "description": "Label for the 'activate left tab' setting."
+  },
+  "newTabRightLabel": {
+    "message": "Open new tabs to the right of the current tab",
+    "description": "Label for the 'new tab right' setting."
+  }
+}

@@ -54,5 +54,18 @@ newTabRightCheckbox.addEventListener('change', (event) => {
     saveSetting(SETTING_KEYS.STORAGE_KEY.NEW_TAB_RIGHT, event.target.checked);
 });
 
-// 页面加载时，加载设置
-document.addEventListener('DOMContentLoaded', loadSettings);
+// 页面加载时，加载设置和本地化文本
+document.addEventListener('DOMContentLoaded', () => {
+    loadSettings();
+    localizeHtmlPage();
+});
+
+/**
+ * 本地化 HTML 页面中的文本
+ */
+function localizeHtmlPage() {
+    document.getElementById('popupTitle').textContent = chrome.i18n.getMessage('extensionDefaultTitle');
+    document.getElementById('featuresToggle').textContent = chrome.i18n.getMessage('featuresToggle');
+    document.getElementById('activateLeftTabLabel').textContent = chrome.i18n.getMessage('activateLeftTabLabel');
+    document.getElementById('newTabRightLabel').textContent = chrome.i18n.getMessage('newTabRightLabel');
+}

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tab Control Pro Settings</title>
+  <title id="popupTitle"></title>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="container">
-    <h3>功能开关</h3>
+    <h3 id="featuresToggle"></h3>
 
     <div class="setting-row">
-      <div class="setting-label">关闭标签页后激活左侧标签页</div>
+      <div class="setting-label" id="activateLeftTabLabel"></div>
       <label class="switch">
         <input type="checkbox" id="activateLeftTab">
         <span class="slider round"></span>
@@ -18,7 +18,7 @@
     </div>
 
     <div class="setting-row">
-      <div class="setting-label">在当前标签页右侧打开新标签页</div>
+      <div class="setting-label" id="newTabRightLabel"></div>
       <label class="switch">
         <input type="checkbox" id="newTabRight">
         <span class="slider round"></span>

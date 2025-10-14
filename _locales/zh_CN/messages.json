@@ -1,0 +1,26 @@
+{
+  "extensionName": {
+    "message": "标签页控制增强",
+    "description": "扩展名称。"
+  },
+  "extensionDescription": {
+    "message": "提供关闭标签页时激活左侧标签页，以及在新标签页打开时将其置于右侧的选项。",
+    "description": "扩展描述。"
+  },
+  "extensionDefaultTitle": {
+    "message": "标签页控制增强设置",
+    "description": "扩展操作按钮的默认标题。"
+  },
+  "featuresToggle": {
+    "message": "功能开关",
+    "description": "功能开关部分的标题。"
+  },
+  "activateLeftTabLabel": {
+    "message": "关闭标签页后激活左侧标签页",
+    "description": "“关闭标签页后激活左侧标签页”设置的标签。"
+  },
+  "newTabRightLabel": {
+    "message": "在当前标签页右侧打开新标签页",
+    "description": "“在新标签页打开时将其置于右侧”设置的标签。"
+  }
+}
