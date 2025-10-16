@@ -9,7 +9,11 @@
 
 它能让您的标签页管理更加符合直觉，大大提升浏览效率。我们成功克服了浏览器对 Ctrl+T 新建标签页位置的限制，确保功能稳定可用。
 
-## 🚀 主要功能
+## � 商店链接
+
+*   **Microsoft Edge 扩展商店**: [标签页控制增强](https://microsoftedge.microsoft.com/addons/detail/%E6%A0%87%E7%AD%BE%E9%A1%B5%E6%8E%A7%E5%88%B6%E5%A2%9E%E5%BC%BA/hfnjgodembadeejbkcpleagcemgkcnpe)
+
+## �🚀 主要功能
 
 | 功能 | 描述 |
 | :--- | :--- |
